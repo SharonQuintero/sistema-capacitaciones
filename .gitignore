@@ -1,0 +1,6 @@
+backend/__pycache__/
+backend/app/__pycache__/
+backend/app/routers/__pycache__/
+backend/app/scripts/__pycache__/
+*.pyc
+.DS_Store
