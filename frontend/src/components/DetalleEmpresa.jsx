@@ -1,38 +1,59 @@
 function DetalleEmpresa({ empresa }) {
   return (
-    <>
-      <h2>{empresa.nombre}</h2>
+    <section className="detalle-empresa">
+      <div className="seccion-titulo">
+        <p>Información empresarial</p>
+        <h2>{empresa.nombre}</h2>
+      </div>
 
-      <p>
-        <strong>Sector:</strong> {empresa.sector}
-      </p>
-
-      <p>
-        <strong>Empleados:</strong> {empresa.cantidad_empleados}
-      </p>
-
-      <p>
-        <strong>Horas:</strong> {empresa.horas_capacitacion}
-      </p>
-
-      <h3>Necesidades</h3>
-      {empresa.necesidades.map((necesidad) => (
-        <p key={necesidad.id}>• {necesidad.descripcion}</p>
-      ))}
-
-      <h3>Capacitaciones sugeridas</h3>
-      {empresa.capacitaciones.map((capacitacion) => (
-        <article key={capacitacion.id}>
-          <p>
-            <strong>Capacitación:</strong> {capacitacion.descripcion}
-          </p>
-
-          <p>
-            <strong>Método:</strong> {capacitacion.metodo}
-          </p>
+      <div className="detalle-grid">
+        <article className="detalle-card">
+          <span>🏭</span>
+          <p>Sector económico</p>
+          <strong>{empresa.sector}</strong>
         </article>
-      ))}
-    </>
+
+        <article className="detalle-card">
+          <span>👥</span>
+          <p>Empleados</p>
+          <strong>{empresa.cantidad_empleados}</strong>
+        </article>
+
+        <article className="detalle-card">
+          <span>⏱️</span>
+          <p>Horas de capacitación</p>
+          <strong>{empresa.horas_capacitacion}</strong>
+        </article>
+      </div>
+
+      <div className="info-doble">
+        <article className="info-panel">
+          <h3>Necesidades identificadas</h3>
+
+          {empresa.necesidades.map((necesidad) => (
+            <p key={necesidad.id} className="item-lista">
+              ✔ {necesidad.descripcion}
+            </p>
+          ))}
+        </article>
+
+        <article className="info-panel">
+          <h3>Capacitaciones sugeridas</h3>
+
+          {empresa.capacitaciones.map((capacitacion) => (
+            <div key={capacitacion.id} className="capacitacion-item">
+              <p>
+                <strong>Capacitación:</strong> {capacitacion.descripcion}
+              </p>
+
+              <p>
+                <strong>Método:</strong> {capacitacion.metodo}
+              </p>
+            </div>
+          ))}
+        </article>
+      </div>
+    </section>
   );
 }
 

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
+
 from app.database import Base
 
 
@@ -35,3 +36,14 @@ class Capacitacion(Base):
     metodo = Column(Text)
 
     empresa = relationship("Empresa", back_populates="capacitaciones")
+
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(150), nullable=False)
+    correo = Column(String(150), unique=True, nullable=False)
+    usuario = Column(String(80), unique=True, nullable=False)
+    contrasena = Column(String(150), nullable=False)
+    rol = Column(String(50), nullable=False)

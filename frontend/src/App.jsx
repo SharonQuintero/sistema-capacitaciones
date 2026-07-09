@@ -1,73 +1,24 @@
-import { useEffect, useState } from "react";
 import "./App.css";
+import "./styles/dashboard.css";
+import "./styles/cards.css";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import SelectorEmpresa from "./components/SelectorEmpresa";
-import DetalleEmpresa from "./components/DetalleEmpresa";
-import PlanCapacitacion from "./components/PlanCapacitacion";
+import AdminDashboard from "./components/AdminDashboard";
+import EmpleadoDashboard from "./components/EmpleadoDashboard";
+import Login from "./components/Login";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const [empresas, setEmpresas] = useState([]);
-  const [empresaSeleccionada, setEmpresaSeleccionada] = useState(null);
-  const [mostrarPlan, setMostrarPlan] = useState(false);
-  const [progreso, setProgreso] = useState(0);
+  const { usuarioActual, iniciarSesion } = useAuth();
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/empresas/")
-      .then((response) => response.json())
-      .then((data) => {
-        setEmpresas(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
-  function verDetalleEmpresa(id) {
-    if (!id) {
-      setEmpresaSeleccionada(null);
-      return;
-    }
-
-    setMostrarPlan(false);
-    setProgreso(0);
-
-    fetch(`http://127.0.0.1:8000/empresas/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setEmpresaSeleccionada(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  if (!usuarioActual) {
+    return <Login onLogin={iniciarSesion} />;
   }
 
-  return (
-    <main>
-      <Header />
+  if (usuarioActual.rol === "administrador") {
+    return <AdminDashboard />;
+  }
 
-      <SelectorEmpresa
-        empresas={empresas}
-        onSeleccionarEmpresa={verDetalleEmpresa}
-      />
-
-      {empresaSeleccionada && (
-        <section>
-          <DetalleEmpresa empresa={empresaSeleccionada} />
-
-          <PlanCapacitacion
-            progreso={progreso}
-            setProgreso={setProgreso}
-            mostrarPlan={mostrarPlan}
-            setMostrarPlan={setMostrarPlan}
-          />
-        </section>
-      )}
-
-      <Footer />
-    </main>
-  );
+  return <EmpleadoDashboard />;
 }
 
 export default App;

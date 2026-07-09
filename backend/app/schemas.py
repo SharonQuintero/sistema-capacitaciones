@@ -1,6 +1,10 @@
 from pydantic import BaseModel
 
 
+# ==========================
+# NECESIDADES
+# ==========================
+
 class NecesidadResponse(BaseModel):
     id: int
     descripcion: str
@@ -8,6 +12,10 @@ class NecesidadResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+# ==========================
+# CAPACITACIONES
+# ==========================
 
 class CapacitacionResponse(BaseModel):
     id: int
@@ -17,6 +25,10 @@ class CapacitacionResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+# ==========================
+# EMPRESAS
+# ==========================
 
 class EmpresaResponse(BaseModel):
     id: int
@@ -32,3 +44,31 @@ class EmpresaResponse(BaseModel):
 class EmpresaDetalleResponse(EmpresaResponse):
     necesidades: list[NecesidadResponse] = []
     capacitaciones: list[CapacitacionResponse] = []
+
+
+# ==========================
+# USUARIOS
+# ==========================
+
+class UsuarioCreate(BaseModel):
+    nombre: str
+    correo: str
+    usuario: str
+    contrasena: str
+    rol: str
+
+
+class UsuarioLogin(BaseModel):
+    usuario: str
+    contrasena: str
+
+
+class UsuarioResponse(BaseModel):
+    id: int
+    nombre: str
+    correo: str
+    usuario: str
+    rol: str
+
+    class Config:
+        from_attributes = True
