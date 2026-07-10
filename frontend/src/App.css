@@ -211,7 +211,7 @@ button {
   background-color: #0f172a;
   border-radius: 14px;
 }
-.opcion {
+.opciones {
   display: flex;
   gap: 10px;
   align-items: flex-start;
@@ -222,22 +222,7 @@ button {
   border-radius: 10px;
 }
 
-.opcion-letra {
-  font-weight: 700;
-  color: #1d4ed8;
-}
-.opcion {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 12px;
-  margin: 10px 0;
-  background-color: #f8fafc;
-  border: 1px solid #dbe3ef;
-  border-radius: 10px;
-}
-
-.opcion-letra {
+.letra {
   font-weight: 700;
   color: #1d4ed8;
 }
