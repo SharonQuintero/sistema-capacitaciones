@@ -72,3 +72,17 @@ class UsuarioResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class ResultadoCreate(BaseModel):
+    usuario_id: int
+    empresa_id: int | None = None
+    porcentaje: int
+    aprobado: str
+    fecha: str
+
+
+class ResultadoResponse(ResultadoCreate):
+    id: int
+
+    class Config:
+        from_attributes = True

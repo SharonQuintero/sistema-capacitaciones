@@ -32,3 +32,29 @@ def crear_usuario(
     db.refresh(nuevo_usuario)
 
     return nuevo_usuario
+
+from app.models import ResultadoCapacitacion
+from app.schemas import ResultadoCreate
+
+
+def crear_resultado(
+    db: Session,
+    datos_resultado: ResultadoCreate,
+) -> ResultadoCapacitacion:
+    nuevo_resultado = ResultadoCapacitacion(
+        usuario_id=datos_resultado.usuario_id,
+        empresa_id=datos_resultado.empresa_id,
+        porcentaje=datos_resultado.porcentaje,
+        aprobado=datos_resultado.aprobado,
+        fecha=datos_resultado.fecha,
+    )
+
+    db.add(nuevo_resultado)
+    db.commit()
+    db.refresh(nuevo_resultado)
+
+    return nuevo_resultado
+
+
+def listar_resultados(db: Session) -> list[ResultadoCapacitacion]:
+    return db.query(ResultadoCapacitacion).all()

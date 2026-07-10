@@ -47,3 +47,14 @@ class Usuario(Base):
     usuario = Column(String(80), unique=True, nullable=False)
     contrasena = Column(String(150), nullable=False)
     rol = Column(String(50), nullable=False)
+
+
+class ResultadoCapacitacion(Base):
+    __tablename__ = "resultados_capacitacion"
+
+    id = Column(Integer, primary_key=True, index=True)
+    usuario_id = Column(Integer, nullable=False)
+    empresa_id = Column(Integer, nullable=True)
+    porcentaje = Column(Integer, nullable=False)
+    aprobado = Column(String(20), nullable=False)
+    fecha = Column(String(50), nullable=False)
