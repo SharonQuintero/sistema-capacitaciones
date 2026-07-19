@@ -5,52 +5,68 @@ import DetalleEmpresa from "./DetalleEmpresa";
 import EmpresasGrid from "./EmpresasGrid";
 import Footer from "./Footer";
 import Header from "./Header";
-import PlanCapacitacion from "./PlanCapacitacion";
+import ResultadosAdmin from "./ResultadosAdmin";
 import { useAuth } from "../context/AuthContext";
+
+const API_EMPRESAS = "http://127.0.0.1:8000/empresas/";
 
 function AdminDashboard() {
   const { usuarioActual } = useAuth();
 
   const [empresas, setEmpresas] = useState([]);
   const [empresaSeleccionada, setEmpresaSeleccionada] = useState(null);
-  const [mostrarPlan, setMostrarPlan] = useState(false);
-  const [progreso, setProgreso] = useState(0);
+  const [mensajeError, setMensajeError] = useState("");
 
   const detalleRef = useRef(null);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/empresas/")
-      .then((response) => response.json())
-      .then((data) => setEmpresas(data))
-      .catch((error) => {
-        console.error(error);
-      });
+    async function cargarEmpresas() {
+      try {
+        const respuesta = await fetch(API_EMPRESAS);
+
+        if (!respuesta.ok) {
+          setMensajeError("No se pudieron cargar las empresas.");
+          return;
+        }
+
+        const datos = await respuesta.json();
+        setEmpresas(datos);
+      } catch {
+        setMensajeError("No se pudo conectar con el servidor.");
+      }
+    }
+
+    cargarEmpresas();
   }, []);
 
-  function verDetalleEmpresa(id) {
+  async function verDetalleEmpresa(id) {
     if (!id) {
       setEmpresaSeleccionada(null);
       return;
     }
 
-    setMostrarPlan(false);
-    setProgreso(0);
+    setMensajeError("");
 
-    fetch(`http://127.0.0.1:8000/empresas/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setEmpresaSeleccionada(data);
+    try {
+      const respuesta = await fetch(`${API_EMPRESAS}${id}`);
 
-        window.requestAnimationFrame(() => {
-          detalleRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
+      if (!respuesta.ok) {
+        setMensajeError("No se pudo cargar la información de la empresa.");
+        return;
+      }
+
+      const datos = await respuesta.json();
+      setEmpresaSeleccionada(datos);
+
+      window.requestAnimationFrame(() => {
+        detalleRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
         });
-      })
-      .catch((error) => {
-        console.error(error);
       });
+    } catch {
+      setMensajeError("No se pudo conectar con el servidor.");
+    }
   }
 
   return (
@@ -66,41 +82,38 @@ function AdminDashboard() {
         />
 
         <DashboardCard
-          icono="📚"
-          titulo="Capacitación"
-          valor={progreso === 100 ? "Finalizada" : "Activa"}
+          icono="📊"
+          titulo="Resultados"
+          valor="Seguimiento"
           claseColor="card-verde"
-        />
-
-        <DashboardCard
-          icono="📈"
-          titulo="Avance"
-          valor={`${progreso}%`}
-          claseColor="card-naranja"
         />
 
         <DashboardCard
           icono="👤"
           titulo="Usuario"
-          valor={usuarioActual.nombre}
+          valor={usuarioActual?.nombre ?? "Administrador"}
           claseColor="card-morado"
         />
       </section>
 
-      <EmpresasGrid empresas={empresas} onVerDetalle={verDetalleEmpresa} />
+      {mensajeError && (
+        <p className="resultado resultado-no-aprobado" role="alert">
+          {mensajeError}
+        </p>
+      )}
+
+      <EmpresasGrid
+        empresas={empresas}
+        onVerDetalle={verDetalleEmpresa}
+      />
 
       {empresaSeleccionada && (
         <section ref={detalleRef}>
           <DetalleEmpresa empresa={empresaSeleccionada} />
-
-          <PlanCapacitacion
-            progreso={progreso}
-            setProgreso={setProgreso}
-            mostrarPlan={mostrarPlan}
-            setMostrarPlan={setMostrarPlan}
-          />
         </section>
       )}
+
+      <ResultadosAdmin />
 
       <Footer />
     </main>

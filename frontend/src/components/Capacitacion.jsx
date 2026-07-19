@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 
 const API_RESULTADOS = "http://127.0.0.1:8000/resultados/";
 const TOTAL_PREGUNTAS = 10;
-const PORCENTAJE_APROBACION = 70;
 
 const preguntas = [
   {
@@ -306,10 +305,10 @@ function Capacitacion({ onFinalizar, empresaId = null }) {
     setMensajeValidacion("");
   }
 
-  async function guardarResultado(porcentaje, aprobado) {
+  async function guardarResultado(porcentaje) {
     if (!usuarioActual?.id) {
       setMensajeGuardado("No se encontró el usuario autenticado.");
-      return;
+      return false;
     }
 
     setGuardando(true);
@@ -324,19 +323,21 @@ function Capacitacion({ onFinalizar, empresaId = null }) {
           usuario_id: usuarioActual.id,
           empresa_id: empresaId,
           porcentaje,
-          aprobado: aprobado ? "APROBADO" : "NO APROBADO",
+          aprobado: "APROBADO",
           fecha: obtenerFechaActual(),
         }),
       });
 
       if (!respuesta.ok) {
         setMensajeGuardado("El resultado no pudo guardarse.");
-        return;
+        return false;
       }
 
       setMensajeGuardado("Resultado guardado correctamente.");
+      return true;
     } catch {
       setMensajeGuardado("No se pudo conectar con el servidor.");
+      return false;
     } finally {
       setGuardando(false);
     }
@@ -351,27 +352,20 @@ function Capacitacion({ onFinalizar, empresaId = null }) {
       setMensajeValidacion(
         `Debes responder todas las preguntas. Te faltan ${pendientes}.`,
       );
+
       return;
     }
 
-    /*
-     * Todas las opciones seleccionadas se consideran correctas.
-     * Por lo tanto, responder las diez preguntas produce una nota de 100 %.
-     */
-    const porcentaje = Math.round(
-      (cantidadRespondidas / TOTAL_PREGUNTAS) * 100,
-    );
-    const aprobado = porcentaje >= PORCENTAJE_APROBACION;
+    const porcentaje = 100;
 
     setResultado({
-      correctas: cantidadRespondidas,
+      correctas: TOTAL_PREGUNTAS,
       porcentaje,
-      aprobado,
     });
 
-    await guardarResultado(porcentaje, aprobado);
+    await guardarResultado(porcentaje);
 
-    if (aprobado && typeof onFinalizar === "function") {
+    if (typeof onFinalizar === "function") {
       onFinalizar();
     }
   }
@@ -386,7 +380,10 @@ function Capacitacion({ onFinalizar, empresaId = null }) {
     window.requestAnimationFrame(() => {
       document
         .querySelector(".capacitacion")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
     });
   }
 
@@ -440,23 +437,19 @@ function Capacitacion({ onFinalizar, empresaId = null }) {
           disabled={guardando}
           onClick={calcularResultado}
         >
-          {guardando ? "Guardando resultado..." : "Finalizar cuestionario"}
+          {guardando
+            ? "Guardando resultado..."
+            : "Finalizar cuestionario"}
         </button>
       )}
 
       {resultado && (
-        <div
-          className={
-            resultado.aprobado
-              ? "resultado resultado-aprobado"
-              : "resultado resultado-no-aprobado"
-          }
-        >
-          <h3>{resultado.aprobado ? "APROBADO" : "NO APROBADO"}</h3>
+        <div className="resultado resultado-aprobado">
+          <h3>APROBADO</h3>
 
           <p>
-            <strong>Preguntas respondidas:</strong> {resultado.correctas} de{" "}
-            {TOTAL_PREGUNTAS}
+            <strong>Preguntas respondidas:</strong>{" "}
+            {resultado.correctas} de {TOTAL_PREGUNTAS}
           </p>
 
           <p>
@@ -470,7 +463,10 @@ function Capacitacion({ onFinalizar, empresaId = null }) {
 
           {mensajeGuardado && <p>{mensajeGuardado}</p>}
 
-          <button type="button" onClick={reiniciarCuestionario}>
+          <button
+            type="button"
+            onClick={reiniciarCuestionario}
+          >
             Realizar cuestionario nuevamente
           </button>
         </div>

@@ -1,42 +1,47 @@
+import { useState } from "react";
+
+import DashboardCard from "./DashboardCard";
 import Footer from "./Footer";
 import Header from "./Header";
 import PlanCapacitacion from "./PlanCapacitacion";
 
 function EmpleadoDashboard() {
+  const [progreso, setProgreso] = useState(0);
+  const [mostrarPlan, setMostrarPlan] = useState(true);
+
   return (
     <main>
       <Header />
 
       <section className="dashboard-resumen">
-        <article className="dashboard-card card-verde">
-          <div className="dashboard-icono">📚</div>
-          <div className="dashboard-contenido">
-            <p className="dashboard-titulo">Capacitación asignada</p>
-            <h2>Inducción</h2>
-          </div>
-        </article>
+        <DashboardCard
+          icono="📚"
+          titulo="Capacitación asignada"
+          valor={progreso === 100 ? "Finalizada" : "Pendiente"}
+          claseColor="card-verde"
+        />
 
-        <article className="dashboard-card card-naranja">
-          <div className="dashboard-icono">📈</div>
-          <div className="dashboard-contenido">
-            <p className="dashboard-titulo">Avance</p>
-            <h2>0%</h2>
-          </div>
-        </article>
+        <DashboardCard
+          icono="📈"
+          titulo="Mi avance"
+          valor={`${progreso}%`}
+          claseColor="card-naranja"
+        />
       </section>
 
       <section>
         <h2>Mi capacitación</h2>
+
         <p>
           Desde este módulo podrás realizar la capacitación asignada y responder
           el cuestionario correspondiente.
         </p>
 
         <PlanCapacitacion
-          progreso={0}
-          setProgreso={() => {}}
-          mostrarPlan
-          setMostrarPlan={() => {}}
+          progreso={progreso}
+          setProgreso={setProgreso}
+          mostrarPlan={mostrarPlan}
+          setMostrarPlan={setMostrarPlan}
         />
       </section>
 
