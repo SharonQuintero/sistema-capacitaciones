@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models import Usuario
+from app.models import Empresa, ResultadoCapacitacion, Usuario
 from app.schemas import UsuarioCreate
 
 
