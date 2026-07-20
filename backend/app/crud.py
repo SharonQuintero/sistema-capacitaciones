@@ -58,3 +58,25 @@ def crear_resultado(
 
 def listar_resultados(db: Session) -> list[ResultadoCapacitacion]:
     return db.query(ResultadoCapacitacion).all()
+def listar_resultados_detallados(db: Session):
+    resultados = (
+        db.query(
+            ResultadoCapacitacion.id,
+            Usuario.nombre.label("usuario_nombre"),
+            Empresa.nombre.label("empresa_nombre"),
+            ResultadoCapacitacion.porcentaje,
+            ResultadoCapacitacion.aprobado,
+            ResultadoCapacitacion.fecha,
+        )
+        .join(
+            Usuario,
+            ResultadoCapacitacion.usuario_id == Usuario.id,
+        )
+        .outerjoin(
+            Empresa,
+            ResultadoCapacitacion.empresa_id == Empresa.id,
+        )
+        .all()
+    )
+
+    return resultados
