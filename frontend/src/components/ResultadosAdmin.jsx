@@ -1,58 +1,84 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-const API_RESULTADOS = "http://127.0.0.1:8000/resultados/";
+const API_RESULTADOS =
+  "http://127.0.0.1:8000/resultados/detallados";
 
 function ResultadosAdmin() {
   const [resultados, setResultados] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [mensajeError, setMensajeError] = useState("");
 
-  useEffect(() => {
-    async function cargarResultados() {
-      try {
-        const respuesta = await fetch(API_RESULTADOS);
+  const cargarResultados = useCallback(async () => {
+    setCargando(true);
+    setMensajeError("");
 
-        if (!respuesta.ok) {
-          setMensajeError("No se pudieron cargar los resultados.");
-          return;
-        }
+    try {
+      const respuesta = await fetch(API_RESULTADOS, {
+        cache: "no-store",
+      });
 
-        const datos = await respuesta.json();
-        setResultados(datos);
-      } catch {
-        setMensajeError("No se pudo conectar con el servidor.");
-      } finally {
-        setCargando(false);
+      if (!respuesta.ok) {
+        setMensajeError("No se pudieron cargar los resultados.");
+        return;
       }
-    }
 
-    cargarResultados();
+      const datos = await respuesta.json();
+
+      const resultadosOrdenados = [...datos].sort(
+        (resultadoA, resultadoB) =>
+          resultadoB.id - resultadoA.id,
+      );
+
+      setResultados(resultadosOrdenados);
+    } catch {
+      setMensajeError("No se pudo conectar con el servidor.");
+    } finally {
+      setCargando(false);
+    }
   }, []);
 
-  if (cargando) {
-    return <p>Cargando resultados...</p>;
-  }
+  useEffect(() => {
+    cargarResultados();
+  }, [cargarResultados]);
 
   return (
     <section className="resultados-admin">
-      <h2>Resultados de capacitaciones</h2>
+      <div className="seccion-titulo">
+        <p>Seguimiento</p>
+        <h2>Resultados de capacitaciones</h2>
+      </div>
+
+      <button
+        type="button"
+        onClick={cargarResultados}
+        disabled={cargando}
+      >
+        {cargando
+          ? "Actualizando..."
+          : "Actualizar resultados"}
+      </button>
 
       {mensajeError && (
-        <p className="resultado resultado-no-aprobado" role="alert">
+        <p
+          className="resultado resultado-no-aprobado"
+          role="alert"
+        >
           {mensajeError}
         </p>
       )}
 
-      {!mensajeError && resultados.length === 0 && (
-        <p>Aún no hay resultados registrados.</p>
-      )}
+      {!cargando &&
+        !mensajeError &&
+        resultados.length === 0 && (
+          <p>Aún no hay resultados registrados.</p>
+        )}
 
-      {resultados.length > 0 && (
+      {!cargando && resultados.length > 0 && (
         <div className="tabla-contenedor">
           <table className="tabla-resultados">
             <thead>
               <tr>
-                <th>Usuario</th>
+                <th>Empleado</th>
                 <th>Empresa</th>
                 <th>Porcentaje</th>
                 <th>Estado</th>
@@ -63,10 +89,17 @@ function ResultadosAdmin() {
             <tbody>
               {resultados.map((resultado) => (
                 <tr key={resultado.id}>
-                  <td>{resultado.usuario_id}</td>
-                  <td>{resultado.empresa_id ?? "Sin empresa"}</td>
+                  <td>{resultado.usuario_nombre}</td>
+
+                  <td>
+                    {resultado.empresa_nombre ??
+                      "Sin empresa"}
+                  </td>
+
                   <td>{resultado.porcentaje}%</td>
+
                   <td>{resultado.aprobado}</td>
+
                   <td>{resultado.fecha}</td>
                 </tr>
               ))}

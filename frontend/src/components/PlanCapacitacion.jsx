@@ -5,6 +5,7 @@ function PlanCapacitacion({
   setProgreso,
   mostrarPlan,
   setMostrarPlan,
+  empresaId,
 }) {
   function finalizarCapacitacion() {
     setProgreso(100);
@@ -41,7 +42,10 @@ function PlanCapacitacion({
       </div>
 
       <div className="barra-progreso">
-        <div className="avance-progreso" style={{ width: `${progreso}%` }} />
+        <div
+          className="avance-progreso"
+          style={{ width: `${progreso}%` }}
+        />
       </div>
 
       <p>
@@ -57,7 +61,10 @@ function PlanCapacitacion({
         mediante capacitaciones enfocadas en las necesidades identificadas.
       </p>
 
-      <button type="button" onClick={() => setMostrarPlan(!mostrarPlan)}>
+      <button
+        type="button"
+        onClick={() => setMostrarPlan(!mostrarPlan)}
+      >
         {mostrarPlan
           ? "Ocultar plan de capacitación"
           : "Generar plan de capacitación"}
@@ -74,7 +81,10 @@ function PlanCapacitacion({
             <li>Semana 4: Evaluación y cierre.</li>
           </ul>
 
-          <Capacitacion onFinalizar={finalizarCapacitacion} />
+          <Capacitacion
+            onFinalizar={finalizarCapacitacion}
+            empresaId={empresaId}
+          />
         </div>
       )}
     </>

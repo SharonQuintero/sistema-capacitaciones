@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ==========================
@@ -9,8 +9,7 @@ class NecesidadResponse(BaseModel):
     id: int
     descripcion: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ==========================
@@ -22,8 +21,7 @@ class CapacitacionResponse(BaseModel):
     descripcion: str
     metodo: str | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ==========================
@@ -37,13 +35,12 @@ class EmpresaResponse(BaseModel):
     sector: str | None = None
     horas_capacitacion: int | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class EmpresaDetalleResponse(EmpresaResponse):
-    necesidades: list[NecesidadResponse] = []
-    capacitaciones: list[CapacitacionResponse] = []
+    necesidades: list[NecesidadResponse] = Field(default_factory=list)
+    capacitaciones: list[CapacitacionResponse] = Field(default_factory=list)
 
 
 # ==========================
@@ -70,9 +67,13 @@ class UsuarioResponse(BaseModel):
     usuario: str
     rol: str
 
-    class Config:
-        from_attributes = True
-        
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ==========================
+# RESULTADOS DE CAPACITACION
+# ==========================
+
 class ResultadoCreate(BaseModel):
     usuario_id: int
     empresa_id: int | None = None
@@ -84,5 +85,15 @@ class ResultadoCreate(BaseModel):
 class ResultadoResponse(ResultadoCreate):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ResultadoDetalleResponse(BaseModel):
+    id: int
+    usuario_nombre: str
+    empresa_nombre: str | None = None
+    porcentaje: int
+    aprobado: str
+    fecha: str
+
+    model_config = ConfigDict(from_attributes=True)

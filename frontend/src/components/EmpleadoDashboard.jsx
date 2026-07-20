@@ -5,6 +5,8 @@ import Footer from "./Footer";
 import Header from "./Header";
 import PlanCapacitacion from "./PlanCapacitacion";
 
+const EMPRESA_ASIGNADA_ID = 1;
+
 function EmpleadoDashboard() {
   const [progreso, setProgreso] = useState(0);
   const [mostrarPlan, setMostrarPlan] = useState(true);
@@ -42,6 +44,7 @@ function EmpleadoDashboard() {
           setProgreso={setProgreso}
           mostrarPlan={mostrarPlan}
           setMostrarPlan={setMostrarPlan}
+          empresaId={EMPRESA_ASIGNADA_ID}
         />
       </section>
 
